@@ -1,0 +1,22 @@
+service: ttn-serverless
+
+provider:
+  name: aws
+  runtime: python3.6
+  environment:
+    TTN_KEY: ${env:TTN_KEY}
+
+functions:
+  uplink:
+    handler: handler.uplink
+    events:
+      - http:
+          path: uplink
+          method: post
+
+  downlink:
+    handler: handler.downlink
+    events:
+      - http:
+          path: /devices/{device_id}/downlink
+          method: post
