@@ -1,17 +1,19 @@
 import json
 import os
 import base64
+import pprint
 import codecs
 from binascii import b2a_base64
 from botocore.vendored import requests
 
 key = os.environ.get('TTN_KEY', '')
+pp = pprint.PrettyPrinter(indent=4)
 
 
 def uplink(event, context):
-    print(event)
+    pp.pprint(event)
     body = json.loads(event['body'])
-    print(base64.b64decode(body['payload_raw']))
+    pp.pprint(base64.b64decode(body['payload_raw']))
     return {
         "statusCode": 200,
         "body": json.dumps("OK")
@@ -19,7 +21,7 @@ def uplink(event, context):
 
 
 def downlink(event, context):
-    print(event)
+    pp.pprint(event)
     payload = codecs.encode(json.loads(event['body'])['payload'])
 
     url = 'https://integrations.thethingsnetwork.org/ttn-eu/api/v2/down/my-svdgraaf-application/my-http-integration'  # noqa
@@ -43,12 +45,12 @@ def downlink(event, context):
     return response
 
 
-# if __name__ == "__main__":
-#     print (downlink({
-#         'body': json.dumps({
-#             "payload": "foobar"
-#         }),
-#         'pathParameters': {
-#             'device_id': 'my-test-device'
-#         }
-#     }, {}))
+if __name__ == "__main__":
+    pp.pprint(downlink({
+        'body': json.dumps({
+            "payload": "foobar"
+        }),
+        'pathParameters': {
+            'device_id': 'my-test-device'
+        }
+    }, {}))
