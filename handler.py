@@ -2,15 +2,15 @@ import json
 import os
 import base64
 import codecs
-from binascii import hexlify, b2a_base64
+from binascii import b2a_base64
 from botocore.vendored import requests
 
 key = os.environ.get('TTN_KEY', '')
 
+
 def uplink(event, context):
     print(event)
     body = json.loads(event['body'])
-    print(body)
     print(base64.b64decode(body['payload_raw']))
     return {
         "statusCode": 200,
@@ -22,7 +22,7 @@ def downlink(event, context):
     print(event)
     payload = codecs.encode(json.loads(event['body'])['payload'])
 
-    url = 'https://integrations.thethingsnetwork.org/ttn-eu/api/v2/down/my-svdgraaf-application/my-http-integration'
+    url = 'https://integrations.thethingsnetwork.org/ttn-eu/api/v2/down/my-svdgraaf-application/my-http-integration'  # noqa
     params = {
         'key': key
     }
@@ -41,6 +41,7 @@ def downlink(event, context):
     }
 
     return response
+
 
 # if __name__ == "__main__":
 #     print (downlink({
