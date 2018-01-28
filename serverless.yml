@@ -5,6 +5,7 @@ provider:
   runtime: python3.6
   environment:
     TTN_KEY: ${env:TTN_KEY}
+    DYNAMODB_TABLE: ${env:DYNAMODB_TABLE}
 
 functions:
   uplink:
@@ -20,3 +21,11 @@ functions:
       - http:
           path: /devices/{device_id}/downlink
           method: post
+
+  log:
+    handler: handler.log
+    events:
+      - http:
+          path: /devices/log
+          method: get
+          cors: true
