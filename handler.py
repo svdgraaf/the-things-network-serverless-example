@@ -80,6 +80,11 @@ def log(event, context):
     }
     return response
 
+
+
+
+
+
 if __name__ == "__main__":
     # pp.pprint(log({}, {}))
     # temps = [b'18.1',b'18.2',b'18.0',b'18.3',b'18.4',b'18.7',b'18.8',b'18.9',b'19.1',b'19.3',b'19.7',b'20.1',b'20.3',b'20.1']
