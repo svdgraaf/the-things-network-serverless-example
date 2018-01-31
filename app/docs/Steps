@@ -1,0 +1,20 @@
+# before
+locksmith sh sander
+# Open tabs
+# Open app tab
+
+# Open serverless.yaml
+# Explain functions (getting events)
+# Deploy
+pipenv run serverless deploy
+
+# Open TTN webhook page
+# Show TTN integration
+
+# Simulate the device
+echo "19.6" | xxd -pu | xargs ttnctl devices simulate my-test-device;
+
+
+
+
+SCALING

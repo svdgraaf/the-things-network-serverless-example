@@ -17,9 +17,12 @@ table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
 key = os.environ.get('TTN_KEY', '')
 
 
+
+
+
 def uplink(event, context):
     body = json.loads(event['body'])
-
+    print(body)
     item = {
         'id': str(uuid.uuid1()),
         'payload': b64decode(body['payload_raw']).decode('utf-8').strip(),
@@ -36,9 +39,8 @@ def uplink(event, context):
 
 
 def downlink(event, context):
-    pp.pprint(event)
     payload = codecs.encode(json.loads(event['body'])['payload'])
-
+    print(event['body'])
     url = 'https://integrations.thethingsnetwork.org/ttn-eu/api/v2/down/my-svdgraaf-application/my-http-integration'  # noqa
     params = {
         'key': key
