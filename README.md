@@ -15,7 +15,7 @@ Setup
 - Checkout the code
 - Install the NPM dependencies: `npm install`
 - Make sure you have your `TTN_APP` key (you can create them in the TTN console) in your environment (eg: `export TTN_KEY=foobar` in your terminal)
-- Be sure you have setup your AWS credentials (eg `~/.aws/credentials`)
+- Be sure you have setup your [AWS credentials](https://serverless.com/framework/docs/providers/aws/guide/credentials/) (eg `~/.aws/credentials`)
 - Deploy the app with `sls deploy`
 - The output will contain the endpoint for your `uplink`, copy that url.
 - Go into the TTN console, and setup an http integration, point the endpoint to your `uplink` endpoint. Make sure you set it to `POST`. The demo doesn't do ANY authentication
