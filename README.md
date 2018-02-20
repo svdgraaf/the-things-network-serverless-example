@@ -3,11 +3,17 @@ Demo for setting up a Serverless TTN integration
 
 This is the demo app which was shown during the The Things Network Conference.
 
-You can find the slides on [slideshare](https://speakerdeck.com/svdgraaf/the-things-network-end-to-end-serverless-applications).
+This was part of my talk for the Things Conference, you can view my [slides](https://speakerdeck.com/svdgraaf/the-things-network-end-to-end-serverless-applications) here, and watch my talk here:
+
+[![Serverless end to end Lorawan solutions](https://img.youtube.com/vi/DCTrIQcLa4Y/0.jpg)](https://www.youtube.com/watch?v=DCTrIQcLa4Y)
 
 BEWARE
 ------
 This is a demo to show you how to setup an example integration, this is no way a comprehensive setup, but it will get you started with a simple setup
+
+Architecture
+------------
+![Architeture](https://github.com/svdgraaf/serverless-ttn-demo/blob/master/architecture.png?raw=true)
 
 Setup
 -----
