@@ -1,9 +1,9 @@
 # ttn-serverless-demo
-Demo for setting up a Serverless The Things Network integration.
+Demo app for setting up a Serverless The Things Network integration.
 
 This is the demo app which was shown during the The Things Network Conference.
 
-This was part of my talk for the Things Conference, you can view my [slides](https://speakerdeck.com/svdgraaf/the-things-network-end-to-end-serverless-applications) here, and watch my talk here:
+This was part of my talk for the Things Conference, you can view my [slides](https://speakerdeck.com/svdgraaf/the-things-network-end-to-end-serverless-applications) here, and watch my talk on youtube here:
 
 [![Serverless end to end Lorawan solutions](https://github.com/svdgraaf/serverless-ttn-demo/blob/master/talk-intro.png?raw=true)](https://www.youtube.com/watch?v=DCTrIQcLa4Y)
 
@@ -17,7 +17,6 @@ Architecture
 
 Setup
 -----
-
 - Checkout the code (eg: `git clone https://github.com/svdgraaf/serverless-ttn-demo.git`), or download the [zip](https://github.com/svdgraaf/serverless-ttn-demo/archive/master.zip)
 - Install the [NPM](https://www.npmjs.com/) dependencies: `npm install`
 - Make sure you have your `TTN_APP` key (you can create them in the TTN console) in your environment (eg: `export TTN_KEY=ttn-account-v2.o7...` in your terminal)
