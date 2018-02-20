@@ -13,11 +13,13 @@ Setup
 -----
 
 - Checkout the code
-- Make sure you have two values in you environment (`export FOO="bar"`):
-  o TTN_KEY: The value of your key (you can create them in the TTN console)
-  o DYNAMODB_TABLE: The name of the table you want to create (serverless will create it for you)
+- Install the NPM dependencies: `npm install`
+- Make sure you have your `TTN_APP` key (you can create them in the TTN console) in your environment (eg: `export TTN_KEY=foobar` in your terminal)
 - Be sure you have setup your AWS credentials (eg `~/.aws/credentials`)
-- Deploy the app with `serverless deploy`
+- Deploy the app with `sls deploy`
 - The output will contain the endpoint for your `uplink`, copy that url.
-- Go into the TTN console, and setup an http integration, point the endpoint to your `uplink` endpoint. Make sure you set it to `POST`
-- The connections are setup, you can test a payload using: `echo "19.6" | xxd -pu | xargs ttnctl devices simulate my-device;`
+- Go into the TTN console, and setup an http integration, point the endpoint to your `uplink` endpoint. Make sure you set it to `POST`. The demo doesn't do ANY authentication
+- Done. The connections are setup, you can test a payload using: `echo "19.6" | xxd -pu | xargs ttnctl devices simulate my-device-name;`
+- Check that the value ends up in your dynamodb table
+- ...
+- Profit!

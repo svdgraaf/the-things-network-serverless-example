@@ -3,6 +3,10 @@
     <title>My Awesome TTN app</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script>
+      // CHANGE THE URL HERE
+      var api_gateway_endpoint = "https://CHANGEME.execute-api.us-east-1.amazonaws.com"
+    </script>
   </head>
   <style>
   .sidebar {
@@ -201,7 +205,7 @@
       function get_logs(){
         var items = $.ajax({
                 type: "GET",
-                url: "https://w2uifm9ltl.execute-api.us-east-1.amazonaws.com/dev/devices/log",
+                url: api_gateway_endpoint + "/dev/devices/log",
                 async: false,
             }).done(function(){
                 setTimeout(function(){get_logs();}, 1000);

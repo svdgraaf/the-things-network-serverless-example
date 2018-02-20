@@ -5,7 +5,7 @@ provider:
   runtime: python3.6
   environment:
     TTN_KEY: ${env:TTN_KEY}
-    DYNAMODB_TABLE: ${env:DYNAMODB_TABLE}
+    DYNAMODB_TABLE: ${env:DYNAMODB_TABLE,"ttn_serverless_demo"}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -49,15 +49,6 @@ resources:
         AttributeDefinitions:
           -
             AttributeName: id
-            AttributeType: S
-          -
-            AttributeName: payload
-            AttributeType: S
-          -
-            AttributeName: device_id
-            AttributeType: S
-          -
-            AttributeName: createdAt
             AttributeType: S
         KeySchema:
           -
