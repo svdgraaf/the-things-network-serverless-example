@@ -5,7 +5,7 @@ This is the demo app which was shown during the The Things Network Conference.
 
 This was part of my talk for the Things Conference, you can view my [slides](https://speakerdeck.com/svdgraaf/the-things-network-end-to-end-serverless-applications) here, and watch my talk here:
 
-[![Serverless end to end Lorawan solutions](https://img.youtube.com/vi/DCTrIQcLa4Y/0.jpg)](https://www.youtube.com/watch?v=DCTrIQcLa4Y)
+[![Serverless end to end Lorawan solutions](https://github.com/svdgraaf/serverless-ttn-demo/blob/master/talk-intro.png?raw=true)](https://www.youtube.com/watch?v=DCTrIQcLa4Y)
 
 BEWARE
 ------
