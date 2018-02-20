@@ -4,8 +4,6 @@ from base64 import b64decode
 import pprint
 import codecs
 import uuid
-import binascii
-from datetime import datetime
 import boto3
 from binascii import b2a_base64
 from botocore.vendored import requests
@@ -17,9 +15,6 @@ table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
 key = os.environ.get('TTN_KEY', '')
 
 
-
-
-
 def uplink(event, context):
     body = json.loads(event['body'])
     print(body)
@@ -27,8 +22,7 @@ def uplink(event, context):
         'id': str(uuid.uuid1()),
         'payload': b64decode(body['payload_raw']).decode('utf-8').strip(),
         'device_id': body['dev_id'],
-        'createdAt': body['metadata']['time'],
-        'updatedAt': body['metadata']['time'],
+        'createdAt': body['metadata']['time']
     }
     table.put_item(Item=item)
 
@@ -84,24 +78,22 @@ def log(event, context):
 
 
 
-
-
-
-if __name__ == "__main__":
-    # pp.pprint(log({}, {}))
-    # temps = [b'18.1',b'18.2',b'18.0',b'18.3',b'18.4',b'18.7',b'18.8',b'18.9',b'19.1',b'19.3',b'19.7',b'20.1',b'20.3',b'20.1']
-    # for temp in temps:
-    #     pp.pprint(uplink({
-    #         'body': json.dumps({
-    #             "payload": "foobar",
-    #             "payload_raw": b2a_base64(temp).decode('utf-8').strip(),
-    #             "dev_id": "my-test-device",
-    #             "metadata": {
-    #                 "time": datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-    #             }
-    #         }),
-    #         'pathParameters': {
-    #             'device_id': 'my-test-device'
-    #         }
-    #     }, {}))
-    pass
+# Local testing...
+# if __name__ == "__main__":
+#     # pp.pprint(log({}, {}))
+#     # temps = [b'18.1',b'18.2',b'18.0',b'18.3',b'18.4',b'18.7',b'18.8',b'18.9',b'19.1',b'19.3',b'19.7',b'20.1',b'20.3',b'20.1']
+#     # for temp in temps:
+#     #     pp.pprint(uplink({
+#     #         'body': json.dumps({
+#     #             "payload": "foobar",
+#     #             "payload_raw": b2a_base64(temp).decode('utf-8').strip(),
+#     #             "dev_id": "my-test-device",
+#     #             "metadata": {
+#     #                 "time": datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+#     #             }
+#     #         }),
+#     #         'pathParameters': {
+#     #             'device_id': 'my-test-device'
+#     #         }
+#     #     }, {}))
+#     pass
