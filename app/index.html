@@ -2,10 +2,13 @@
   <head>
     <title>My Awesome TTN app</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script>
       // CHANGE THE URL HERE
-      var api_gateway_endpoint = "https://CHANGEME.execute-api.us-east-1.amazonaws.com"
+      var api_gateway_endpoint = "https://w2uifm9ltl.execute-api.us-east-1.amazonaws.com"
     </script>
   </head>
   <style>
@@ -155,7 +158,7 @@
         </nav>
         <main class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-            <h1 class="h2">Devices</h1>
+            <h1 class="h2">Devices > <span id="device-name"></span></h1>
             <div class="btn-toolbar mb-2 mb-md-0">
               <div class="btn-group mr-2">
                 <button class="btn btn-sm btn-outline-secondary">Filter</button>
@@ -167,15 +170,42 @@
               </button>
             </div>
           </div>
-          <h2>Logs</h2>
+
+          <!-- <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="temp-tab" data-field="temperature" data-toggle="tab" href="#temp" role="tab" aria-controls="home" aria-selected="true">Temperature</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="light-tab" data-field="light" data-toggle="tab" href="#light" role="tab" aria-controls="profile" aria-selected="false">Light</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="batt-tab" data-field="battery" data-toggle="tab" href="#batt" role="tab" aria-controls="contact" aria-selected="false">Battery</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="temp" role="tabpanel" aria-labelledby="temp-tab">
+              <canvas class="my-4" id="temp-chart" width="900" height="200"></canvas>
+            </div>
+            <div class="tab-pane fade" id="light" role="tabpanel" aria-labelledby="light-tab">
+              <canvas class="my-4" id="light-chart" width="900" height="200"></canvas>
+            </div>
+            <div class="tab-pane fade" id="batt" role="tabpanel" aria-labelledby="batt-tab">
+              <canvas class="my-4" id="batt-chart" width="900" height="200"></canvas>
+            </div>
+          </div> -->
           <canvas class="my-4" id="data-chart" width="900" height="200"></canvas>
+
+          <h3>Logs</h3>
           <div class="table-responsive">
             <table class="table table-striped table-sm">
               <thead>
                 <tr>
                   <th>Device</th>
-                  <th>Datetime</th>
-                  <th>Payload</th>
+                  <th>When</th>
+                  <th>Event</th>
+                  <th>Light</th>
+                  <th>Temperature</th>
+                  <th>Battery</th>
                 </tr>
               </thead>
               <tbody id="data-table">
@@ -197,6 +227,10 @@
       feather.replace()
       var ctx;
       var chart;
+      var temp_data = [];
+      var light_data = [];
+      var batt_data = [];
+
       $(document).ready(function(){
         create_chart();
         get_logs();
@@ -205,36 +239,66 @@
       function get_logs(){
         var items = $.ajax({
                 type: "GET",
-                url: api_gateway_endpoint + "/dev/devices/log",
+                url: api_gateway_endpoint + "/dev/devices/svdgraaf-ttn-node/log",
                 async: false,
             }).done(function(){
-                setTimeout(function(){get_logs();}, 1000);
+                setTimeout(function(){get_logs();}, 2500);
             });
         $('#data-table').empty();
         chart.data.datasets[0].data = [];
         chart.data.labels = [];
         i = 0;
-        var data = [];
+        temp_data = [];
+        light_data = [];
+        batt_data = [];
+
         $(items.responseJSON).each(function(i, o){
+          $('#device-name').text(o.dev_id);
           var row = $('<tr>');
-          row.append($('<td>').text(o.device_id));
-          row.append($('<td>').text(o.createdAt));
-          row.append($('<td>').text(o.payload));
+          row.append($('<td>').text(o.dev_id));
+          row.append($('<td>').text(moment(o.createdAt).fromNow()));
+          row.append($('<td>').text(o.payload_fields.event));
+          row.append($('<td>').text(o.payload_fields.light));
+          row.append($('<td>').text(o.payload_fields.temperature));
+          row.append($('<td>').text(o.payload_fields.battery));
           $('#data-table').append(row);
+
+          // datapoints["temperature"].push(o.payload_fields.temperature);
+          // datapoints["battery"].push(o.payload_fields.battery);
+          // datapoints["light"].push(o.payload_fields.light);
+
           // console.log("" + parseFloat(o.payload), o.payload);
-          if("" + parseFloat(o.payload) == o.payload) {
-            chart.data.labels.push('')
-            data.push(o.payload);
-          }
+          // if("" + parseFloat(o.payload_fields.temperature) == o.payload_fields.temperature) {
+          // chart.data.labels.push('')
+          temp_data.push(parseFloat(o.payload_fields.temperature));
+          light_data.push(parseFloat(o.payload_fields.light));
+          batt_data.push(parseFloat(o.payload_fields.battery));
+          // chart.data.labels.push(moment(o.createdAt).fromNow(true))
+          chart.data.labels.push(moment(o.createdAt).valueOf())
+          // }
           i = i + 1;
         })
-        data.reverse();
-        chart.data.datasets[0].data = data;
+        // batt_data.reverse();
+        // light_data.reverse();
+        // temp_data.reverse();
+        chart.data.datasets[0].data = temp_data;
+        chart.data.datasets[1].data = light_data;
+        chart.data.datasets[2].data = batt_data;
         // chart.data.datasets[0].data = data;
         // console.log(chart.data.datasets[0].data.length)
 
         chart.update(0);
       }
+      window.chartColors = {
+      	red: 'rgb(255, 99, 132)',
+      	orange: 'rgb(255, 159, 64)',
+      	yellow: 'rgb(255, 205, 86)',
+      	green: 'rgb(75, 192, 192)',
+      	blue: 'rgb(54, 162, 235)',
+      	purple: 'rgb(153, 102, 255)',
+      	grey: 'rgb(201, 203, 207)'
+      };
+
       function create_chart(){
         ctx = document.getElementById("data-chart");
         chart = new Chart(ctx, {
@@ -242,25 +306,66 @@
           data: {
             labels: [],
             datasets: [{
+              label: "Temperature (C)",
               data: [],
               lineTension: 0,
               backgroundColor: 'transparent',
-              borderColor: '#007bff',
-              borderWidth: 4,
-              pointBackgroundColor: '#007bff'
+              borderColor: window.chartColors.red,
+              // borderWidth: 4,
+              // pointBackgroundColor: '#007bff',
+              yAxisID: 'y-axis-1',
+            },{
+              data: [],
+              label: "Light (lm)",
+              lineTension: 0,
+              borderColor: window.chartColors.blue,
+              // backgroundColor: 'transparent',
+              // borderColor: '#007bff',
+              // borderWidth: 2,
+              // pointBackgroundColor: '#007bff'
+              yAxisID: 'y-axis-1',
+            },{
+              data: [],
+              label: "Battery (V)",
+              lineTension: 0,
+              borderColor: window.chartColors.green,
+
+              // backgroundColor: 'transparent',
+              // borderColor: '#007bff',
+              // borderWidth: 1,
+              // pointBackgroundColor: '#007bff'
+              yAxisID: 'y-axis-2',
             }]
           },
           options: {
             scales: {
+              xAxes: [{
+                type: 'time',
+    						// distribution: 'linear',
+    						distribution: 'series',
+    						ticks: {
+    							source: 'labels'
+    						}
+              }],
               yAxes: [{
                 ticks: {
-                  beginAtZero: false
-                }
-              }]
+                  beginAtZero: false,
+                },
+                position: 'left',
+                id: 'y-axis-1',
+              },
+              {
+                position: 'right',
+                id: 'y-axis-2',
+                gridLines: {
+                  drawOnChartArea: false, // only want the grid lines for one axis to show up
+                },
+              }
+              ]
             },
-            legend: {
-              display: false,
-            },
+            // legend: {
+            //   display: false,
+            // },
             tooltips: {
                 callbacks: {
                    label: function(tooltipItem) {

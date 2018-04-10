@@ -5,7 +5,7 @@ provider:
   runtime: python3.6
   environment:
     TTN_KEY: ${env:TTN_KEY}
-    DYNAMODB_TABLE: ${env:DYNAMODB_TABLE,"ttn_serverless_demo"}
+    DYNAMODB_TABLE: ${env:DYNAMODB_TABLE, "ttn_sls_demo"}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -18,6 +18,8 @@ provider:
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
 functions:
+
+  # Uplink function, this is where the data will come into
   uplink:
     handler: handler.uplink
     events:
@@ -25,6 +27,7 @@ functions:
           path: uplink
           method: post
 
+  # downlink, this is used for sending data back to TTN
   downlink:
     handler: handler.downlink
     events:
@@ -32,29 +35,58 @@ functions:
           path: /devices/{device_id}/downlink
           method: post
 
+  # returns the last 100 items for a specific device
   log:
     handler: handler.log
+    timeout: 20
     events:
       - http:
-          path: /devices/log
+          path: /devices/{device_id}/log
           method: get
           cors: true
 
 resources:
   Resources:
-    TodosDynamoDbTable:
+
+    # DynamoDB table containing all the payloads
+    TTNNodeResources:
       Type: 'AWS::DynamoDB::Table'
       DeletionPolicy: Retain
       Properties:
         AttributeDefinitions:
           -
-            AttributeName: id
+            AttributeName: dev_id
             AttributeType: S
+          -
+            AttributeName: counter
+            AttributeType: N
         KeySchema:
           -
-            AttributeName: id
+            AttributeName: dev_id
             KeyType: HASH
+          -
+            AttributeName: counter
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${self:provider.environment.DYNAMODB_TABLE}
+
+    # bucket for our app
+    AppS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: PublicRead
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: error.html
+
+
+# plugin to sync our app directory into the created bucket
+# plugins:
+#   - serverless-s3-sync
+#
+# custom:
+#   s3Sync:
+#     - bucketName: ${env:BUCKET_NAME}
+#       localDir: app

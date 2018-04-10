@@ -5,25 +5,44 @@ import pprint
 import codecs
 import uuid
 import boto3
+from util import dict_to_dynamo_item, DecimalEncoder
 from binascii import b2a_base64
 from botocore.vendored import requests
+from boto3.dynamodb.conditions import Key
 pp = pprint.PrettyPrinter(indent=4)
 
 
 dynamodb = boto3.resource('dynamodb')
+client = boto3.client('dynamodb')
 table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
 key = os.environ.get('TTN_KEY', '')
 
 
 def uplink(event, context):
+    # parse request body and log it
     body = json.loads(event['body'])
     print(body)
+
+    # build a dynamo item
     item = {
         'id': str(uuid.uuid1()),
-        'payload': b64decode(body['payload_raw']).decode('utf-8').strip(),
-        'device_id': body['dev_id'],
-        'createdAt': body['metadata']['time']
+        'createdAt': body['metadata']['time'],
     }
+    # add the whole request body
+    item.update(dict_to_dynamo_item(body))
+
+    # If we don't have specific payload fields, store the whole payload
+    if 'payload_fields' not in body:
+        try:
+            payload = b64decode(body['payload_raw']).decode('utf-8').strip()
+            item.update({'payload': payload})
+        except Exception as e:
+            return {
+                "statusCode": 500,
+                "body": str(e)
+            }
+
+    # Store item in dynamo table
     table.put_item(Item=item)
 
     return {
@@ -58,13 +77,13 @@ def downlink(event, context):
 
 def log(event, context):
     data = []
-    response = table.scan()
+    dev_id = event['pathParameters']['device_id']
+    response = table.query(
+        KeyConditionExpression=Key('dev_id').eq(dev_id) & Key('counter').gt(0),
+        ScanIndexForward=False,
+        Limit=100
+    )
     data = response['Items']
-    while response.get('LastEvaluatedKey'):
-        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-        data.extend(response['Items'])
-
-    data = sorted(data, key=lambda k: k['createdAt'], reverse=True)
 
     response = {
         "headers": {
@@ -72,28 +91,6 @@ def log(event, context):
             "Access-Control-Allow-Origin": "*"
         },
         "statusCode": 200,
-        "body": json.dumps(data)
+        "body": json.dumps(data, cls=DecimalEncoder)
     }
     return response
-
-
-
-# Local testing...
-# if __name__ == "__main__":
-#     # pp.pprint(log({}, {}))
-#     # temps = [b'18.1',b'18.2',b'18.0',b'18.3',b'18.4',b'18.7',b'18.8',b'18.9',b'19.1',b'19.3',b'19.7',b'20.1',b'20.3',b'20.1']
-#     # for temp in temps:
-#     #     pp.pprint(uplink({
-#     #         'body': json.dumps({
-#     #             "payload": "foobar",
-#     #             "payload_raw": b2a_base64(temp).decode('utf-8').strip(),
-#     #             "dev_id": "my-test-device",
-#     #             "metadata": {
-#     #                 "time": datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-#     #             }
-#     #         }),
-#     #         'pathParameters': {
-#     #             'device_id': 'my-test-device'
-#     #         }
-#     #     }, {}))
-#     pass
