@@ -84,6 +84,7 @@ def log(event, context):
         Limit=100
     )
     data = response['Items']
+    data = sorted(data, key=lambda k: k['createdAt'], reverse=True)
 
     response = {
         "headers": {

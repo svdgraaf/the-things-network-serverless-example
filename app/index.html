@@ -202,6 +202,7 @@
                 <tr>
                   <th>Device</th>
                   <th>When</th>
+                  <th>Counter</th>
                   <th>Event</th>
                   <th>Light</th>
                   <th>Temperature</th>
@@ -210,6 +211,9 @@
               </thead>
               <tbody id="data-table">
                 <tr>
+                  <td>...</td>
+                  <td>...</td>
+                  <td>...</td>
                   <td>...</td>
                   <td>...</td>
                   <td>...</td>
@@ -257,35 +261,23 @@
           var row = $('<tr>');
           row.append($('<td>').text(o.dev_id));
           row.append($('<td>').text(moment(o.createdAt).fromNow()));
+          row.append($('<td>').text(o.counter));
           row.append($('<td>').text(o.payload_fields.event));
           row.append($('<td>').text(o.payload_fields.light));
           row.append($('<td>').text(o.payload_fields.temperature));
           row.append($('<td>').text(o.payload_fields.battery));
           $('#data-table').append(row);
 
-          // datapoints["temperature"].push(o.payload_fields.temperature);
-          // datapoints["battery"].push(o.payload_fields.battery);
-          // datapoints["light"].push(o.payload_fields.light);
-
-          // console.log("" + parseFloat(o.payload), o.payload);
-          // if("" + parseFloat(o.payload_fields.temperature) == o.payload_fields.temperature) {
-          // chart.data.labels.push('')
           temp_data.push(parseFloat(o.payload_fields.temperature));
           light_data.push(parseFloat(o.payload_fields.light));
           batt_data.push(parseFloat(o.payload_fields.battery));
-          // chart.data.labels.push(moment(o.createdAt).fromNow(true))
           chart.data.labels.push(moment(o.createdAt).valueOf())
           // }
           i = i + 1;
         })
-        // batt_data.reverse();
-        // light_data.reverse();
-        // temp_data.reverse();
         chart.data.datasets[0].data = temp_data;
         chart.data.datasets[1].data = light_data;
         chart.data.datasets[2].data = batt_data;
-        // chart.data.datasets[0].data = data;
-        // console.log(chart.data.datasets[0].data.length)
 
         chart.update(0);
       }
