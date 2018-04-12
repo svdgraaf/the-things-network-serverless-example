@@ -1,4 +1,4 @@
-# The Things Network Serverless examplegi
+# The Things Network Serverless example
 Demo app for setting up a Serverless The Things Network integration.
 
 This is the demo app which was shown during the The Things Network Conference.
