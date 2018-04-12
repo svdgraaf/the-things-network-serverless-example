@@ -58,14 +58,14 @@ resources:
             AttributeName: dev_id
             AttributeType: S
           -
-            AttributeName: counter
+            AttributeName: timestamp
             AttributeType: N
         KeySchema:
           -
             AttributeName: dev_id
             KeyType: HASH
           -
-            AttributeName: counter
+            AttributeName: timestamp
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
@@ -83,10 +83,10 @@ resources:
 
 
 # plugin to sync our app directory into the created bucket
-# plugins:
-#   - serverless-s3-sync
-#
-# custom:
-#   s3Sync:
-#     - bucketName: ${env:BUCKET_NAME}
-#       localDir: app
+plugins:
+  - serverless-s3-sync
+
+custom:
+  s3Sync:
+    - bucketName: ${env:BUCKET_NAME}
+      localDir: app

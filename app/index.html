@@ -260,7 +260,7 @@
           $('#device-name').text(o.dev_id);
           var row = $('<tr>');
           row.append($('<td>').text(o.dev_id));
-          row.append($('<td>').text(moment(o.createdAt).fromNow()));
+          row.append($('<td>').text(moment.unix(o.timestamp).fromNow()));
           row.append($('<td>').text(o.counter));
           row.append($('<td>').text(o.payload_fields.event));
           row.append($('<td>').text(o.payload_fields.light));
@@ -271,7 +271,7 @@
           temp_data.push(parseFloat(o.payload_fields.temperature));
           light_data.push(parseFloat(o.payload_fields.light));
           batt_data.push(parseFloat(o.payload_fields.battery));
-          chart.data.labels.push(moment(o.createdAt).valueOf())
+          chart.data.labels.push(moment.unix(o.timestamp).valueOf())
           // }
           i = i + 1;
         })

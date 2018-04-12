@@ -1,6 +1,8 @@
 import json
 import os
 from base64 import b64decode
+from dateutil import parser
+import time
 import pprint
 import codecs
 import uuid
@@ -24,10 +26,12 @@ def uplink(event, context):
     print(body)
 
     # build a dynamo item
+    dt = parser.parse(body['metadata']['time'])
     item = {
         'id': str(uuid.uuid1()),
-        'createdAt': body['metadata']['time'],
+        'timestamp': int(time.mktime(dt.timetuple())),
     }
+
     # add the whole request body
     item.update(dict_to_dynamo_item(body))
 
@@ -79,12 +83,12 @@ def log(event, context):
     data = []
     dev_id = event['pathParameters']['device_id']
     response = table.query(
-        KeyConditionExpression=Key('dev_id').eq(dev_id) & Key('counter').gt(0),
+        KeyConditionExpression=Key('dev_id').eq(dev_id) & Key('timestamp').gt(0),
         ScanIndexForward=False,
         Limit=100
     )
     data = response['Items']
-    data = sorted(data, key=lambda k: k['createdAt'], reverse=True)
+    data = sorted(data, key=lambda k: k['timestamp'], reverse=True)
 
     response = {
         "headers": {
